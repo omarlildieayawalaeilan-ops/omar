@@ -1,0 +1,814 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>محاسبي الشخصي </title>
+    <meta name="theme-color" content="#2c3e50">
+    <meta name="description" content="   مصمم من المهندس عمر صالح">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💰</text></svg>">
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --text: #333;
+            --bg: #f9f9f9;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding-bottom: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        header p {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        .alert {
+            background-color: var(--warning);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .card h3 {
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            color: var(--dark);
+        }
+
+        .card .amount {
+            font-size: 1.4rem;
+            font-weight: bold;
+        }
+
+        .debt .amount {
+            color: var(--danger);
+        }
+
+        .asset .amount {
+            color: var(--success);
+        }
+
+        .tabs {
+            display: flex;
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .tab.active {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .form-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--secondary);
+            outline: none;
+        }
+
+        button {
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+            width: 100%;
+            font-weight: 500;
+        }
+
+        button:hover {
+            background-color: var(--primary);
+        }
+
+        .filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .search-bar {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-select {
+            min-width: 150px;
+        }
+
+        .records-list {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .record-item {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .record-item:last-child {
+            border-bottom: none;
+        }
+
+        .record-info {
+            flex: 1;
+        }
+
+        .record-info h4 {
+            margin-bottom: 5px;
+            color: var(--dark);
+        }
+
+        .record-meta {
+            font-size: 0.8rem;
+            color: #777;
+            margin-bottom: 3px;
+        }
+
+        .record-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-settle {
+            background-color: var(--success);
+            padding: 8px 12px;
+            font-size: 0.8rem;
+            width: auto;
+        }
+
+        .btn-delete {
+            background-color: var(--danger);
+            padding: 8px 12px;
+            font-size: 0.8rem;
+            width: auto;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #777;
+        }
+
+        .archive-info {
+            font-size: 0.9rem;
+            color: #777;
+            margin-bottom: 15px;
+            text-align: center;
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--success);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            display: none;
+        }
+
+        .toast.show {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @media (max-width: 600px) {
+            .summary-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .filters {
+                flex-direction: column;
+            }
+            
+            .search-bar, .filter-select {
+                min-width: 100%;
+            }
+            
+            .record-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .record-actions {
+                width: 100%;
+                margin-top: 10px;
+                justify-content: space-between;
+            }
+            
+            .btn-settle, .btn-delete {
+                flex: 1;
+            }
+            
+            header h1 {
+                font-size: 1.3rem;
+            }
+            
+            .card .amount {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>محاسبي الشخصي المطور</h1>
+            <p>أداة ذكية لإدارة الديون والمستحقات المالية</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="alert" id="dueTodayAlert">
+            <strong>تذكير:</strong> لديك معاملات تستحق السداد اليوم!
+        </div>
+
+        <div class="summary-cards">
+            <div class="card debt">
+                <h3>مجموع الديون عليَّ</h3>
+                <div class="amount" id="totalDebt">0 ج.م</div>
+            </div>
+            <div class="card asset">
+                <h3>مجموع المستحقات لي</h3>
+                <div class="amount" id="totalAsset">0 ج.م</div>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" data-tab="records">السجلات النشطة</div>
+            <div class="tab" data-tab="add">إضافة سجل جديد</div>
+            <div class="tab" data-tab="archive">الأرشيف</div>
+        </div>
+
+        <div class="section active" id="records-section">
+            <div class="filters">
+                <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="ابحث بالاسم أو الملاحظات...">
+                </div>
+                <select class="filter-select" id="typeFilter">
+                    <option value="all">الكل</option>
+                    <option value="debt">الديون عليَّ</option>
+                    <option value="asset">المستحقات لي</option>
+                </select>
+                <select class="filter-select" id="categoryFilter">
+                    <option value="all">جميع التصنيفات</option>
+                    <option value="سلفة مالية">سلفة مالية</option>
+                    <option value="شراء بضاعة">شراء بضاعة</option>
+                    <option value="خدمة/إيجار">خدمة/إيجار</option>
+                    <option value="أخرى">أخرى</option>
+                </select>
+            </div>
+
+            <div class="records-list" id="activeRecordsList">
+                <div class="empty-state">
+                    <p>لا توجد سجلات نشطة</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" id="add-section">
+            <div class="form-container">
+                <form id="recordForm">
+                    <div class="form-group">
+                        <label for="type">النوع</label>
+                        <select id="type" required>
+                            <option value="">اختر النوع</option>
+                            <option value="debt">دين عليَّ</option>
+                            <option value="asset">مستحق لي</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="category">التصنيف</label>
+                        <select id="category" required>
+                            <option value="">اختر التصنيف</option>
+                            <option value="سلفة مالية">سلفة مالية</option>
+                            <option value="شراء بضاعة">شراء بضاعة</option>
+                            <option value="خدمة/إيجار">خدمة/إيجار</option>
+                            <option value="أخرى">أخرى</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="party">اسم الطرف</label>
+                        <input type="text" id="party" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="amount">المبلغ (ج.م)</label>
+                        <input type="number" id="amount" min="0" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="dueDate">تاريخ الاستحقاق (اختياري)</label>
+                        <input type="date" id="dueDate">
+                    </div>
+                    <div class="form-group">
+                        <label for="notes">ملاحظات</label>
+                        <textarea id="notes" rows="3"></textarea>
+                    </div>
+                    <button type="submit">إضافة السجل</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="section" id="archive-section">
+            <div class="archive-info">
+                هذه قائمة بجميع المعاملات التي تم سدادها. يمكنك حذف أي سجل بشكل نهائي.
+            </div>
+            <div class="records-list" id="archivedRecordsList">
+                <div class="empty-state">
+                    <p>لا توجد سجلات في الأرشيف</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // بيانات التطبيق
+        let records = JSON.parse(localStorage.getItem('financialRecords')) || [];
+
+        // عناصر DOM
+        const dueTodayAlert = document.getElementById('dueTodayAlert');
+        const totalDebtEl = document.getElementById('totalDebt');
+        const totalAssetEl = document.getElementById('totalAsset');
+        const tabs = document.querySelectorAll('.tab');
+        const sections = document.querySelectorAll('.section');
+        const recordForm = document.getElementById('recordForm');
+        const searchInput = document.getElementById('searchInput');
+        const typeFilter = document.getElementById('typeFilter');
+        const categoryFilter = document.getElementById('categoryFilter');
+        const activeRecordsList = document.getElementById('activeRecordsList');
+        const archivedRecordsList = document.getElementById('archivedRecordsList');
+        const toast = document.getElementById('toast');
+
+        // تهيئة التطبيق
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('جاري تهيئة التطبيق...');
+            updateSummary();
+            checkDueToday();
+            renderActiveRecords();
+            renderArchivedRecords();
+            
+            // إضافة مستمعي الأحداث
+            setupEventListeners();
+        });
+
+        // إعداد مستمعي الأحداث
+        function setupEventListeners() {
+            console.log('جاري إعداد مستمعي الأحداث...');
+            
+            // التنقل بين الأقسام
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    console.log('النقر على تبويب:', tabId);
+                    
+                    // تحديث التبويبات النشطة
+                    tabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // تحديث الأقسام النشطة
+                    sections.forEach(section => {
+                        section.classList.remove('active');
+                        if (section.id === `${tabId}-section`) {
+                            section.classList.add('active');
+                        }
+                    });
+                });
+            });
+            
+            // إضافة سجل جديد
+            recordForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                console.log('جاري إضافة سجل جديد...');
+                addNewRecord();
+            });
+            
+            // البحث والفلترة
+            searchInput.addEventListener('input', renderActiveRecords);
+            typeFilter.addEventListener('change', renderActiveRecords);
+            categoryFilter.addEventListener('change', renderActiveRecords);
+        }
+
+        // إضافة سجل جديد
+        function addNewRecord() {
+            const type = document.getElementById('type').value;
+            const category = document.getElementById('category').value;
+            const party = document.getElementById('party').value;
+            const amount = parseFloat(document.getElementById('amount').value);
+            const dueDate = document.getElementById('dueDate').value;
+            const notes = document.getElementById('notes').value;
+            
+            console.log('بيانات النموذج:', { type, category, party, amount, dueDate, notes });
+            
+            // التحقق من صحة البيانات
+            if (!type || !category || !party || !amount) {
+                showToast('يرجى ملء جميع الحقول الإلزامية', 'error');
+                return;
+            }
+            
+            const newRecord = {
+                id: Date.now(),
+                type: type,
+                category: category,
+                party: party,
+                amount: amount,
+                dueDate: dueDate,
+                notes: notes,
+                isSettled: false,
+                createdAt: new Date().toISOString()
+            };
+            
+            console.log('السجل الجديد:', newRecord);
+            
+            records.push(newRecord);
+            saveRecords();
+            recordForm.reset();
+            
+            // تحديث الواجهة
+            updateSummary();
+            checkDueToday();
+            renderActiveRecords();
+            
+            // الانتقال إلى قسم السجلات النشطة
+            tabs[0].click();
+            
+            // إشعار المستخدم
+            showToast('تم إضافة السجل بنجاح!');
+        }
+
+        // تحديث الملخص
+        function updateSummary() {
+            const activeRecords = records.filter(record => !record.isSettled);
+            
+            const totalDebt = activeRecords
+                .filter(record => record.type === 'debt')
+                .reduce((sum, record) => sum + record.amount, 0);
+                
+            const totalAsset = activeRecords
+                .filter(record => record.type === 'asset')
+                .reduce((sum, record) => sum + record.amount, 0);
+                
+            totalDebtEl.textContent = `${totalDebt.toLocaleString()} ج.م`;
+            totalAssetEl.textContent = `${totalAsset.toLocaleString()} ج.م`;
+            
+            console.log('تم تحديث الملخص - الديون:', totalDebt, 'المستحقات:', totalAsset);
+        }
+
+        // التحقق من المعاملات المستحقة اليوم
+        function checkDueToday() {
+            const today = new Date().toISOString().split('T')[0];
+            const dueToday = records.filter(record => 
+                !record.isSettled && record.dueDate === today
+            );
+            
+            if (dueToday.length > 0) {
+                dueTodayAlert.style.display = 'block';
+                dueTodayAlert.innerHTML = `<strong>تذكير:</strong> لديك ${dueToday.length} معاملة تستحق السداد اليوم!`;
+            } else {
+                dueTodayAlert.style.display = 'none';
+            }
+            
+            console.log('المعاملات المستحقة اليوم:', dueToday.length);
+        }
+
+        // عرض السجلات النشطة
+        function renderActiveRecords() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const typeFilterValue = typeFilter.value;
+            const categoryFilterValue = categoryFilter.value;
+            
+            console.log('تصفية السجلات - بحث:', searchTerm, 'نوع:', typeFilterValue, 'تصنيف:', categoryFilterValue);
+            
+            const filteredRecords = records.filter(record => {
+                if (record.isSettled) return false;
+                
+                // تطبيق البحث
+                if (searchTerm && 
+                    !record.party.toLowerCase().includes(searchTerm) && 
+                    !(record.notes && record.notes.toLowerCase().includes(searchTerm))) {
+                    return false;
+                }
+                
+                // تطبيق فلتر النوع
+                if (typeFilterValue !== 'all' && record.type !== typeFilterValue) {
+                    return false;
+                }
+                
+                // تطبيق فلتر التصنيف
+                if (categoryFilterValue !== 'all' && record.category !== categoryFilterValue) {
+                    return false;
+                }
+                
+                return true;
+            });
+            
+            console.log('السجلات المصفاة:', filteredRecords.length);
+            
+            if (filteredRecords.length === 0) {
+                activeRecordsList.innerHTML = `
+                    <div class="empty-state">
+                        <p>لا توجد سجلات نشطة تطابق معايير البحث</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            activeRecordsList.innerHTML = filteredRecords.map(record => `
+                <div class="record-item">
+                    <div class="record-info">
+                        <h4>${record.party} - ${record.amount.toLocaleString()} ج.م</h4>
+                        <div class="record-meta">
+                            ${record.type === 'debt' ? 'دين عليَّ' : 'مستحق لي'} | 
+                            ${record.category} | 
+                            ${record.dueDate ? `يستحق في: ${formatDate(record.dueDate)}` : 'لا يوجد تاريخ استحقاق'}
+                        </div>
+                        ${record.notes ? `<div class="record-meta">${record.notes}</div>` : ''}
+                    </div>
+                    <div class="record-actions">
+                        <button class="btn-settle" onclick="settleRecord(${record.id})">تم السداد</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // عرض السجلات المؤرشفة
+        function renderArchivedRecords() {
+            const archivedRecords = records.filter(record => record.isSettled);
+            
+            console.log('السجلات المؤرشفة:', archivedRecords.length);
+            
+            if (archivedRecords.length === 0) {
+                archivedRecordsList.innerHTML = `
+                    <div class="empty-state">
+                        <p>لا توجد سجلات في الأرشيف</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            archivedRecordsList.innerHTML = archivedRecords.map(record => `
+                <div class="record-item">
+                    <div class="record-info">
+                        <h4>${record.party} - ${record.amount.toLocaleString()} ج.م</h4>
+                        <div class="record-meta">
+                            ${record.type === 'debt' ? 'دين عليَّ' : 'مستحق لي'} | 
+                            ${record.category} | 
+                            ${record.dueDate ? `كان يستحق في: ${formatDate(record.dueDate)}` : 'لا يوجد تاريخ استحقاق'} |
+                            تم السداد في: ${formatDate(record.settledAt)}
+                        </div>
+                        ${record.notes ? `<div class="record-meta">${record.notes}</div>` : ''}
+                    </div>
+                    <div class="record-actions">
+                        <button class="btn-delete" onclick="deleteRecord(${record.id})">حذف</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // تسوية السجل (تم السداد)
+        function settleRecord(id) {
+            console.log('تسوية السجل:', id);
+            if (confirm('هل أنت متأكد من أنك تريد وضع علامة "تم السداد" على هذا السجل؟')) {
+                const recordIndex = records.findIndex(record => record.id === id);
+                if (recordIndex !== -1) {
+                    records[recordIndex].isSettled = true;
+                    records[recordIndex].settledAt = new Date().toISOString();
+                    saveRecords();
+                    updateSummary();
+                    renderActiveRecords();
+                    renderArchivedRecords();
+                    showToast('تم وضع علامة "تم السداد" على السجل بنجاح!');
+                }
+            }
+        }
+
+        // حذف السجل نهائياً
+        function deleteRecord(id) {
+            console.log('حذف السجل:', id);
+            if (confirm('هل أنت متأكد من أنك تريد حذف هذا السجل نهائياً؟')) {
+                records = records.filter(record => record.id !== id);
+                saveRecords();
+                renderArchivedRecords();
+                showToast('تم حذف السجل بنجاح!');
+            }
+        }
+
+        // حفظ السجلات في localStorage
+        function saveRecords() {
+            localStorage.setItem('financialRecords', JSON.stringify(records));
+            console.log('تم حفظ السجلات في localStorage، العدد:', records.length);
+        }
+
+        // تنسيق التاريخ
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('ar-EG');
+        }
+
+        // عرض رسالة toast
+        function showToast(message, type = 'success') {
+            toast.textContent = message;
+            toast.className = 'toast show';
+            
+            if (type === 'error') {
+                toast.style.backgroundColor = '#e74c3c';
+            }
+            
+            setTimeout(() => {
+                toast.className = 'toast';
+            }, 3000);
+            
+            console.log('رسالة Toast:', message);
+        }
+
+        // إضافة بعض البيانات التجريبية للاختبار
+        function addSampleData() {
+            if (records.length === 0) {
+                const sampleRecords = [
+                    {
+                        id: 1,
+                        type: 'debt',
+                        category: 'سلفة مالية',
+                        party: 'أحمد محمد',
+                        amount: 1500,
+                        dueDate: '2024-02-15',
+                        notes: 'سلفة شهرية',
+                        isSettled: false,
+                        createdAt: '2024-01-15T10:00:00Z'
+                    },
+                    {
+                        id: 2,
+                        type: 'asset',
+                        category: 'خدمة/إيجار',
+                        party: 'محمد علي',
+                        amount: 2000,
+                        dueDate: '2024-02-20',
+                        notes: 'إيجار شقة',
+                        isSettled: false,
+                        createdAt: '2024-01-10T14:30:00Z'
+                    },
+                    {
+                        id: 3,
+                        type: 'debt',
+                        category: 'شراء بضاعة',
+                        party: 'متجر الأمل',
+                        amount: 3500,
+                        dueDate: '2024-01-30',
+                        notes: 'شراء بضاعة للبيع',
+                        isSettled: true,
+                        createdAt: '2024-01-05T09:15:00Z',
+                        settledAt: '2024-01-25T16:45:00Z'
+                    }
+                ];
+                
+                records = sampleRecords;
+                saveRecords();
+                updateUI();
+                showToast('تم إضافة بيانات تجريبية للاختبار');
+            }
+        }
+
+        // تحديث الواجهة بالكامل
+        function updateUI() {
+            updateSummary();
+            checkDueToday();
+            renderActiveRecords();
+            renderArchivedRecords();
+        }
+
+        // إضافة زر لإضافة بيانات تجريبية (لأغراض الاختبار فقط)
+        document.addEventListener('DOMContentLoaded', function() {
+            const testButton = document.createElement('button');
+            testButton.textContent = 'إضافة بيانات تجريبية';
+            testButton.style.marginTop = '10px';
+            testButton.style.backgroundColor = '#f39c12';
+            testButton.onclick = addSampleData;
+            
+            // إضافة الزر إلى قسم الأرشيف لأغراض الاختبار فقط
+            document.querySelector('.archive-info').appendChild(testButton);
+        });
+    </script>
+</body>
+</html>
